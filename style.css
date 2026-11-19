@@ -1,0 +1,274 @@
+html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden;
+    
+    background-color: var(--background-color);
+    color: var(--text-color);
+
+    font-family: monospace, monospace;
+    
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+#top {
+    background-color: var(--top-color);
+    color: var(--top-text-color);
+}
+
+h3 {
+    font-size: 18px;
+}
+
+button {
+    border: 0;
+    padding: 8px;
+    margin: 0;
+    background-color: var(--accent-color);
+    font: 26px monospace, monospace;
+    color: var(--accent-text-color);
+    border-radius: 0;
+    cursor: pointer;
+}
+button:hover {
+    background-color: var(--accent-hover-color);
+}
+
+button:focus {
+    background-color: var(--accent-hover-color);
+    outline: 1px solid var(--accent-text-color);
+}
+
+button.keybind {
+    background-color: var(--input-color);
+    color: var(--input-text-color)
+}
+
+button.keybind:hover {
+    background-color: var(--input-hover-color);
+}
+
+.outline {
+    border: 4px solid var(--accent-color);
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+.outline:hover {
+    border: 4px solid var(--accent-hover-color);
+    background-color: var(--background-color);
+}
+
+
+.none {
+    margin: 0;
+    padding: 0;
+    background-color: #00000000 !important;
+    font-family: monospace, monospace;
+    color: inherit;
+}
+
+.saveSettings {
+    padding: 4px 8px !important;
+    margin: 0 0 0 8px !important;
+    flex-grow: 0 !important;
+}
+
+input[type="text"] {
+    color: var(--input-text-color);
+    border: 0;
+    font-size: 20px;
+    font-family: inherit;
+    padding: 4px;
+    border-radius: 0;
+    background-color: var(--input-color);
+}
+
+input[type="text"]:hover {
+    background-color: var(--input-hover-color);
+}
+
+input[type="text"]:focus {
+    outline: 1px solid var(--accent-text-color);
+    background: var(--input-hover-color);;
+}
+
+
+input[type="color" i] {
+    border-radius: 0;
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    background: none;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+
+    border: 4px solid var(--accent-color);
+
+}
+
+input[type="color" i]:hover {
+    border: 4px solid var(--accent-hover-color);
+}
+input[type="color" i]:focus {
+    outline: 1px solid var(--accent-text-color);
+    border: 4px solid var(--accent-hover-color);
+}
+
+input[type="color"]::-webkit-color-swatch {
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+input[type="color" i]::-webkit-color-swatch-wrapper {
+    margin: 0;
+    padding: 3px;
+    border: 0;
+}
+input[type="color" i]::-moz-color-swatch {
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+input[type="color" i]::-moz-color-swatch-wrapper {
+    margin: 0;
+    padding: 3px;
+    border: 0;
+}
+
+.select {
+    position: relative;
+    width: 100%;
+}
+.select select {
+    appearance: none;
+    width: 100%;
+    color: var(--input-text-color);
+    border: 0;
+    font-size: 20px;
+    font-family: inherit;
+    padding: 4px;
+    background-color: var(--input-color);
+    border-radius: 0;
+    cursor: pointer;
+    outline: 0;
+}
+.select select:hover, .select select:focus {
+	background-color: var(--input-hover-color);
+}
+.select select:focus {
+	outline: 1px solid var(--accent-text-color);
+}
+.select::before,
+.select::after {
+    position: absolute;
+    content: "";
+    right: 4px;
+    pointer-events: none;
+}
+
+.select::before {
+    border-left: 0.3rem solid transparent;
+    border-right: 0.3rem solid transparent;
+    border-bottom: 0.3rem solid var(--input-text-color);;
+    top: 25%;
+}
+
+.select::after {
+    border-left: 0.3rem solid transparent;
+    border-right: 0.3rem solid transparent;
+    border-top: 0.3rem solid var(--input-text-color);
+    top: 60%;
+}
+
+#settings, #stats{
+    font-size: 24px;
+}
+#settings h2, #stats h2{
+    font-size: 29px;
+    margin: 0;
+}
+#settings h3, #stats h3{
+    margin: 0 0 4px 0;
+    display: inline;
+    font-size: 24px;
+    font-weight: normal;
+}
+#settings p, #stats p{
+    font-size: 18px;
+}
+.settingsDiv {
+    margin: 8px 0px 8px 0px;
+    display: flex;
+    flex-direction: row;
+}
+.settingsDiv > h3 {
+    width: 60%;
+}
+.settingsDiv > div {
+    width: 40%;
+    display: flex;
+}
+.settingsDiv input[type="text"] {
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.settingsDiv button, #themes-list button {
+    font-size: 20px;
+    padding: 4px;
+    flex: 1;
+}
+.unselected {
+    background-color: var(--unselected-color);
+    color: var(--unselected-text-color);
+}
+.unselected:hover {
+    color: var(--accent-text-color);
+}
+.outline.unselected {
+    border: 4px solid var(--unselected-color);
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+.outline.unselected:hover {
+    border: 4px solid var(--accent-hover-color);
+    background-color: var(--background-color);
+}
+
+
+.mobile {
+    display: none;
+    margin: 8px 0px 8px 0px;
+}
+#themes-list button {
+    margin: 4px 0 0 0;
+    width: 100%;
+}
+
+@media (max-width: 800px) {
+    .settingsDiv {
+        flex-direction: column;
+    }
+    
+    .settingsDiv > div {
+        width: 100%;
+    }
+
+    .settingsDiv > h3 {
+        width: 100%;
+    }
+    
+    .mobile {
+        display: block;
+    }
+}

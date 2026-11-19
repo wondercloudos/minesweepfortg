@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Minesweeper</title>
+        <meta charset="utf-8"/>
+        <meta name="title" content="Minesweeper"/>
+        <meta name="description" content="A simple customizable minesweeper game. Play and analyze games."/>
+        <meta name="robots" content="index,follow"/>
+        <meta name="google-site-verification" content="RxQrAskRY0MF3xounDwxAz3FUPINcIuYu7gR433u6ko" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="style.css"/>
+        <link rel="stylesheet" href="themes.css">
+        <link rel="icon" type="image/x-icon" href="images/favicon.png">
+        <script src="themes.js"></script>
+    
+        <script defer src="fontawesome/solid.min.js"></script>
+        <script defer src="fontawesome/brands.min.js"></script>
+        <script defer src="fontawesome/fontawesome.min.js"></script>
+
+    </head>
+    <body oncontextmenu="return false;">
+        <div style="display: flex; position: absolute; left: 0; right: 0; top: 0; bottom: 0; flex-direction: column;">
+            <div id="top" style="box-shadow: 0px 0px 24px 0 #00000040; position: relative; z-index: 10;">
+                <h1 style="margin: 8px 0 8px 8px; display: inline; font-size: 33px;">minesweeper</h1>
+                <a style="display: inline; color: inherit;" id="logoVersion"></a>
+
+                <div style="float: right; margin: 4px; position: absolute; top: 0; right: 0;">
+                    <a style="color: inherit; cursor: pointer;" id="dailyIcon">
+                        <h2 style="display: inline;">
+                            <i class="fa-solid fa-calendar-day"></i>
+                        </h2>
+                    </a>
+                    <a href="https://github.com/NicholaChen/minesweeper" style="color: inherit;">
+                        <h2 style="display: inline;">
+                            <i class="fa-brands fa-github"></i>
+                        </h2>
+                    </a>  
+                </div>
+                
+                
+
+                <div style="margin: 0 8px 8px 8px; text-align: center;">
+                    <h2 style="margin: 0; display: inline;" title="Time" id="h2Timer">
+                        <i class="fa-solid fa-clock"></i>
+                        <span id="timer"></span>
+                    </h2>
+                    <h2 style="margin: 0; display: inline;" title="Flags" id="h2Flags">
+                        <i class="fa-solid fa-flag"></i>
+                        <span id="flags"></span>
+                    </h2>
+                    <button class="none" id="pauseButton" title="Pause/Unpause">
+                        <h2 style="margin: 0; display: inline; cursor: pointer; font-size: 22px;"><i class="fa-solid fa-circle-pause" id="pause"></i></h2>
+                    </button>
+                    
+                    <button class="none" id="restartButton" title="Restart">
+                        <h2 style="margin: 0; display: inline; cursor: pointer; font-size: 22px;"><i class="fa-solid fa-rotate-right"></i></h2>
+                    </button>
+                    <button class="none" id="moveButton" title="Pan and zoom/normal">
+                        <h2 style="margin: 0; display: inline; cursor: pointer; font-size: 22px;"><i class="fa-solid fa-up-down-left-right" id="moveIcon"></i></h2>
+                    </button>
+                    <button class="none" id="statsButton" title="Stats">
+                        <h2 style="margin: 0; display: inline; cursor: pointer; font-size: 22px;"><i class="fa-solid fa-chart-simple"></i></h2>
+                    </button>
+                    <button class="none" id="settingsButton" title="Settings">
+                        <h2 style="margin: 0; display: inline; cursor: pointer; font-size: 22px;"><i class="fa-solid fa-gear"></i></h2>
+                    </button>
+                </div>
+                <div id="mapCreatorTop" style="margin: 8px; position: absolute; display: none">
+                    <button id="shareMap" title="Share map" style="box-shadow: 0px 0px 18px 0 #00000040;">
+                        Share map
+                    </button>
+                    <button id="resetMap" title="Reset map" style="margin: 0 0 0 8px;  box-shadow: 0px 0px 18px 0 #00000040;">
+                        Reset map
+                    </button>
+                    <div style="margin: 8px 0 8px 0;">
+                        <p id="topText" style="color: --text-color; display: none;">Share link copied.</p>
+                    </div>
+                </div>
+                <div id="customMapTop" style="margin: 8px; position: absolute; display: none">
+                    <button id="exitCustomMap" title="Share map" style="box-shadow: 0px 0px 18px 0 #00000040;">
+                        Exit custom map
+                    </button>
+                </div>
+                <div id="dailyTop" style="margin: 8px; position: absolute; display: none">
+                    <button id="exitDailyMap" title="Share map" style="box-shadow: 0px 0px 18px 0 #00000040;">
+                        Exit daily map
+                    </button>
+                </div>
+            </div>
+            
+            <div style="flex-grow: 1; position: relative; margin: 0; touch-action: none;" id="game">
+                <canvas id="canvas" style="position:absolute; left:0; top:0; width:100%; height:100%;">
+                </canvas>
+                <button id="recenter" style="display: none; position:absolute; bottom: 8px; right: 8px; box-shadow: 0px 0px 18px 0 #00000040;">Recenter</button>
+                <div style="position:absolute; left:0; top: 0; right: 0; bottom: 0; display: flex; justify-content: center; align-items: center; background-color: rgba(0,0,0,0.4); display: none;" id="gameEnd">
+                    <div style="background-color: var(--background-color); padding: 16px; text-align:center; min-width: 15%; box-shadow: 0px 0px 18px 0 #00000040;" onclick="event.stopPropagation();">
+                        <h1 style="text-align: center; margin: 0; font-size: 38px;" id="gameEndText">Game Over!</h1>
+                        <p id="notCounted" style="font-size: 16px; margin: 4px;">Not counted towards stats</p>
+                        <p id="time" style="font-size: 18px; margin: 4px;">Time: </p>
+                        <p id="winStreak" style="font-size: 18px; margin: 4px;">Win Streak </p>
+                        <p id="3BVSec" style="font-size: 18px; margin: 4px;">3BV/sec: </p>
+                        <p id="CPS" style="font-size: 18px; margin: 4px;">CPS: </p>
+                        <button id="playCustomAgainButton">Play again</button>
+                        <button id="playAgainButton">Play again</button>
+                    </div>
+                </div>
+                <div style="position:absolute; left:0; top:0; width:100%; height:100%; display: flex; justify-content: center; align-items: center; pointer-events: none; display: none;" id="pausedScreen">
+                    <h1 style="text-align: center; margin: 0; vertical-align: middle;">Paused</h1>
+                </div>
+                <div style="position:absolute; left:0; top:0; width:100%; height:100%; display: flex; justify-content: center; align-items: center; pointer-events: none;" id="clickAnywhere">
+                    <h1 style="text-align: center; margin: 0; vertical-align: middle;" id="clickAnywhereText">Open any square to begin</h1>
+                </div>
+            </div>
+            <div style="flex-grow: 1; padding: 16px 10% 16px 10%; display: none; overflow: auto;" id="stats">
+                <h1 style="text-align: center; margin: 16px;">Stats</h1>
+                <h2>All games</h2>
+                <div class="settingsDiv">
+                    <h3 style="width: 100%">Wins <span style="float: right;" id="wins"></span></h3>
+                </div>
+                <div class="settingsDiv">
+                    <h3 style="width: 100%">Current win streak <span style="float: right;" id="currentWinStreak"></span></h3>
+                </div>
+                <div class="settingsDiv">
+                    <h3 style="width: 100%">Best win streak <span style="float: right;" id="bestWinStreak"></span></h3>
+                </div>
+                <div class="settingsDiv">
+                    <h3 style="width: 100%">Games played <span style="float: right;" id="gamesPlayed"></span></h3>
+                </div>
+                <div class="settingsDiv">
+                    <h3 style="width: 100%">Win percentage <span style="float: right;" id="winPercentage"></span></h3>
+                </div>
+                <div class="settingsDiv">
+                    <h3 style="width: 100%">Daily map wins <span style="float: right;" id="dailyWins"></span></h3>
+                </div>
+                <div class="settingsDiv">
+                    <h3 style="width: 100%">Current daily map win streak <span style="float: right;" id="dailyCurrentWinStreak"></span></h3>
+                </div>
+                <div class="settingsDiv">
+                    <h3 style="width: 100%">Best daily map win streak <span style="float: right;" id="dailyBestWinStreak"></span></h3>
+                </div>
+                <div class="settingsDiv">
+                    <h3 style="width: 100%">Hours played <span style="float: right;" id="hoursPlayed"></span></h3>
+                </div>
+                <h2>Beginner</h2>
+                <div class="settingsDiv">
+                    <h3 style="width: 100%">Wins <span style="float: right;" id="beginnerWins"></span></h3>
+                </div>
+                <div class="settingsDiv">
+					<h3 style="width: 100%">Games played <span style="float: right;" id="beginnerGamesPlayed"></span></h3>
+				</div>
+				<div class="settingsDiv">
+					<h3 style="width: 100%">Win percentage <span style="float: right;" id="beginnerWinPercentage"></span></h3>
+				</div>
+				<div class="settingsDiv">
+					<h3 style="width: 100%">Average time <span style="float: right;" id="beginnerAverageTime"></span></h3>
+				</div>
+                <h2>Intermediate</h2>
+                <div class="settingsDiv">
+                    <h3 style="width: 100%">Wins <span style="float: right;" id="intermediateWins"></span></h3>
+                </div>
+				<div class="settingsDiv">
+					<h3 style="width: 100%">Games played <span style="float: right;" id="intermediateGamesPlayed"></span></h3>
+				</div>
+    			<div class="settingsDiv">
+					<h3 style="width: 100%">Wins percentage <span style="float: right;" id="intermediateWinPercentage"></span></h3>
+				</div>
+				<div class="settingsDiv">
+					<h3 style="width: 100%">Average time <span style="float: right;" id="intermediateAverageTime"></span></h3>
+				</div>
+                <h2>Expert</h2>
+                <div class="settingsDiv">
+                    <h3 style="width: 100%">Wins <span style="float: right;" id="expertWins"></span></h3>
+                </div>
+                <div class="settingsDiv">
+					<h3 style="width: 100%">Games played <span style="float: right;" id="expertGamesPlayed"></span></h3>
+				</div>
+				<div class="settingsDiv">
+					<h3 style="width: 100%">Wins percentage <span style="float: right;" id="expertWinPercentage"></span></h3>
+				</div>
+				<div class="settingsDiv">
+					<h3 style="width: 100%">Average time <span style="float: right;" id="expertAverageTime"></span></h3>
+				</div>
+                <h2>Reset</h2>
+                <div class="settingsDiv">
+                    <h3>Reset all stats (cannot be undone)</h3>
+                    <div>
+                        <button style="width: 100%;" id="resetStatsButton">Reset</button>
+                    </div>
+                </div>
+            </div>
+            <div style="flex-grow: 1; padding: 16px 10% 16px 10%; display: none; overflow: auto;" id="settings">
+                <div id="keybindsScreen" style="position:absolute; left:0; top:0; width:100%; height:100%; display: flex; justify-content: center; align-items: center; flex-direction: column; background-color: rgba(0,0,0,0.4); z-index: 1;">
+                    <h1 style="display: block; text-align: center; margin: 0;" id="keyList">Press any key</h1>
+                    <h3 style="display: block; text-align: center;">Left click anywhere to cancel</h1>
+                    <button id="keybindConfirm" style="display: none;">Confirm</button>
+                </div>
+                <h1 style="text-align: center; margin: 16px;">Settings</h1>
+                <div style="text-align: center;">
+                    <button style="display: none; margin: 8px;" id="saveImportedSettings">Save imported theme</button><button style="display: none; margin: 8px 8px 8px 0;" id="cancelImportedSettings">Cancel imported theme</button>
+                </div>
+                <div>
+                    <h2 style="display: inline;">Gameplay</h2>
+                    <button class="none" style="float: right;" title="Reset" id="resetGameplaySettings"><i class="fa-solid fa-rotate-left"></i></button>
+                </div>
+                <div class="settingsDiv">
+                    <h3>Difficulty</h2>
+                    <div>
+                        <div class="select">
+                            <select id="difficulty">
+                                    <option value="Beginner">Beginner</option>
+                                    <option value="Intermediate">Intermediate</option>
+                                    <option value="Expert">Expert</option>
+                                    <option value="Custom">Custom</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div style="display: none;" id="customMap">
+                    <div class="settingsDiv">
+                        <h3>Map size (width x height)</h2>
+                            <div>
+                                <input type="text" id="width" />
+                                <span style="float: right; margin: 0 4px 0 4px;">x</span>
+                                <input type="text" id="height" />
+                                <button class="saveSettings" id="saveMapSize">
+                                    <i class="fa-solid fa-floppy-disk"></i>
+                                </button>
+                            </div>
+                    </div>
+                    <div class="settingsDiv">
+                        <h3>Number of mines</h2>
+                        <div>
+                            <input type="text" id="numMines" />
+                            <button class="saveSettings" id="saveNumMines">
+                                <i class="fa-solid fa-floppy-disk"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <p id="mineDensity" style="text-align: center;">Mine density: </p>
+                </div>
+                <div class="settingsDiv">
+                    <h3>Mine randomness</h2>
+                    <div>
+                        <button style="margin: 0 8px 0 0;" id="randomNoGuess">No guess</button>
+                        <button style="margin: 0 8px 0 0;" id="randomEasy">Easy</button>
+                        <button id="randomNormal">Normal</button>
+                    </div>
+                </div>
+                <div class="settingsDiv">
+                    <h3>Infinite lives</h2>
+                    <div>
+                        <button style="margin: 0 8px 0 0;" id="infiniteLivesOff">Off</button>
+                        <button id="infiniteLivesOn">On</button>
+                    </div>
+                </div>
+                <p style="text-align: center; display: none;" id="invalidGameplay"></p>
+                <div>
+                    <h2 style="display: inline;">Controls</h2>
+                    <button class="none" style="float: right;" title="Reset" id="resetControlsSettings"><i class="fa-solid fa-rotate-left"></i></button>
+                </div>
+                <div class="settingsDiv desktop">
+                    <h3>Register clicks</h2>
+                    <div>
+                        <button style="margin: 0 8px 0 0;" id="onMouseDownOff">On mouse up</button>
+                        <button id="onMouseDownOn">On mouse down</button>
+                    </div>
+                </div>
+                <div class="settingsDiv">
+                    <h3>Chording</h2>
+                    <div>
+                        <button style="margin: 0 8px 0 0;" id="chordingOff">Off</button>
+                        <button id="chordingOn">On</button>
+                    </div>
+                </div>
+                <div class="settingsDiv desktop">
+                    <h3>Pause/unpause shortcut</h2>
+                    <div>
+                        <button class="keybind" id="pauseShortcut"></button>
+                    </div>
+                </div>
+                <div class="settingsDiv desktop">
+                    <h3>Restart shortcut</h2>
+                    <div>
+                        <button class="keybind" id="restartShortcut"></button>
+                    </div>
+                </div>
+                <div class="settingsDiv desktop">
+                    <h3>Pan and zoom shortcut</h2>
+                    <div>
+                        <button class="keybind" id="panZoomShortcut"></button>
+                    </div>
+                </div>
+                <div class="settingsDiv desktop">
+                    <h3>Stats shortcut</h2>
+                    <div>
+                        <button class="keybind" id="statsShortcut"></button>
+                    </div>
+                </div>
+                <div class="settingsDiv desktop">
+                    <h3>Settings shortcut</h2>
+                    <div>
+                        <button class="keybind" id="settingsShortcut"></button>
+                    </div>
+                </div>
+                <div class="settingsDiv mobile">
+                    <h3>Mobile hold duration to flag (ms)</h3>
+                    <div>
+                        <input type="text" id="flagHold"/>
+                        <button class="saveSettings" id="saveFlagHold">
+                            <i class="fa-solid fa-floppy-disk"></i>
+                        </button>
+                    </div>
+                </div>
+                <p style="text-align: center; display: none;" id="invalidControls"></p>
+                <div>
+                    <h2 style="display: inline;">Appearance</h2>
+                    <button class="none" style="float: right;" title="Reset" id="resetAppearanceSettings"><i class="fa-solid fa-rotate-left"></i></button>
+                </div>
+                <div class="settingsDiv">
+                    <h3>Show timer</h3>
+                    <div>
+                        <button style="margin: 0 8px 0 0;" id="showTimerOff">Off</button>
+                        <button id="showTimerOn">On</button>
+                    </div>
+                </div>
+                <div class="settingsDiv">
+                    <h3>Show number of flags</h3>
+                    <div>
+                        <button style="margin: 0 8px 0 0;" id="showFlagsOff">Off</button>
+                        <button id="showFlagsOn">On</button>
+                    </div>
+                </div>
+                <div class="settingsDiv">
+                    <h3>Show pause/unpause button</h3>
+                    <div>
+                        <button style="margin: 0 8px 0 0;" id="showPauseOff">Off</button>
+                        <button id="showPauseOn">On</button>
+                    </div>
+                </div>
+                <div class="settingsDiv">
+                    <h3>Show restart button</h3>
+                    <div>
+                        <button style="margin: 0 8px 0 0;" id="showRestartOff">Off</button>
+                        <button id="showRestartOn">On</button>
+                    </div>
+                </div>
+                <div class="settingsDiv">
+                    <h3>Theme</h3>
+                    <div>
+                        <button style="margin: 0 8px 0 0;" id="presetThemeButton">Preset</button>
+                        <button id="customThemeButton">Custom</button>
+                    </div>
+                </div>
+                <div style="margin: -4px 0px 8px 0px; display: none;" id="themes-list">
+                </div>
+                <div id="customTheme" style="display: none;">
+                </div>
+                <div class="settingsDiv" id="shareThemeDiv" style="display: none;">
+                    <h3>Share theme</h3>
+                    <div>
+                        <button style="width: 100%;" id="shareTheme">Share</button>
+                    </div>
+                </div>
+                <p style="text-align: center; display: none;" id="invalidAppearance"></p>
+                <div>
+                    <h2 style="display: inline;">Advanced</h2>
+                    <button class="none" style="float: right;" title="Reset" id="resetAdvancedSettings"><i class="fa-solid fa-rotate-left"></i></button>
+                </div>
+                <div class="settingsDiv">
+                    <h3>Show 3BV/sec on win screen</h3>
+                    <div>
+                        <button style="margin: 0 8px 0 0;" id="show3BVSecOff">Off</button>
+                        <button id="show3BVSecOn">On</button>
+                    </div>
+                </div>
+                <div class="settingsDiv">
+                    <h3>Show CPS on win screen</h3>
+                    <div>
+                        <button style="margin: 0 8px 0 0;" id="showCPSOff">Off</button>
+                        <button id="showCPSOn">On</button>
+                    </div>
+                </div>
+                <div class="settingsDiv">
+                    <h3>Show all mines</h3>
+                    <div>
+                        <button style="margin: 0 8px 0 0;" id="showMinesOff">Off</button>
+                        <button id="showMinesOn">On</button>
+                    </div>
+                </div>
+                <div class="settingsDiv">
+                    <h3>Analysis</h3>
+                    <div>
+                        <button style="margin: 0 8px 0 0;" id="analysisOff">Off</button>
+                        <button style="margin: 0 8px 0 0;" id="analysisSimple">Simple</button>
+                        <button style="margin: 0 8px 0 0;" id="analysisAdvanced">Advanced</button>
+                    </div>
+                </div>
+                <div class="settingsDiv">
+                    <h3>Map creator</h3>
+                    <div>
+                        <button style="margin: 0 8px 0 0;" id="mapCreatorOff">Off</button>
+                        <button id="mapCreatorOn">On</button>
+                    </div>
+                </div>
+                <div class="settingsDiv">
+                    <h3>Reset all settings (cannot be undone)</h3>
+                    <div>
+                        <button style="width: 100%;" id="resetSettingsButton">Reset</button>
+                    </div>
+                </div>
+                <p style="text-align: center; display: none;" id="invalidAdvanced"></p>
+                <div>
+                    <p style="display: inline; margin: 0; ">
+                        <a style="font: inherit; margin: 0; color: inherit;" id="versionFooter"></a>
+                    </p>
+                    <p style="display: inline; float: right; margin: 0;">
+                        By Nichola Chen
+                    </p>
+                </div>
+                <br>
+            </div>
+        </div>
+
+        <script src="analysis.js"></script>
+        <script src="solve.js"></script>
+        <script src="index.js"></script>
+        <script src="stats.js"></script>
+        <script src="settings.js"></script>
+        
+    </body>
+</html
